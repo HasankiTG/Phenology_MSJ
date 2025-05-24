@@ -1,8 +1,5 @@
 ###Erythronium
 ##Separating only elevations###( T_temp + Strata + (T_temp × Stratum) + (1| Site) + (1| Year)
-#put MAM after phenoDOY_LE or HE or ME for when plotting graphs for MAM...
-#when running the code make sure flow goes as it is..if not putting the relevant spring period
-#under the PhenoDoy_.... in the model is compulsory...
 
 
 # Load required packages
