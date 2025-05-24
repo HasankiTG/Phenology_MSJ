@@ -1,2 +1,5 @@
 # Phenology_MSJ
-test
+
+# Components
+The repository contains 7 R scripts.
+
