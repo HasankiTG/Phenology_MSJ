@@ -5,7 +5,7 @@
 #under the PhenoDoy_.... in the model is compulsory...
 
 
-# Load Packages
+# Load required packages
 library(dplyr)
 library(ggplot2)
 library(lme4)
@@ -24,7 +24,7 @@ ery <- read.csv("C:/Users/User/Documents/erythronium/Extracted_DOYs_50/Ery_final
   mutate(Strata ='Understory',
          Site = gsub('G','',Site))
 
-##low, MA
+###low elevation, MA
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -60,7 +60,7 @@ lmm.doy_LE_MA_df<-as.data.frame(summary(lmm.doy_LE_MA)$coef) %>%
 
 
 
-###low, MAM
+###low elevation, MAM
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -95,7 +95,7 @@ lmm.doy_LE_MAM_ery_df<-as.data.frame(summary(lmm.doy_LE_MAM_ery)$coef) %>%
   mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
 
 
-###low, MAMJ
+###low elevation, MAMJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -128,7 +128,7 @@ lmm.doy_LE_MAMJ_df<-as.data.frame(summary(lmm.doy_LE_MAMJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
 
-###low, AM
+###low elevation, AM
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -162,7 +162,7 @@ lmm.doy_LE_AM_df<-as.data.frame(summary(lmm.doy_LE_AM)$coef) %>%
   mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
 
 
-###low, AMJ
+###low elevation, AMJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -196,7 +196,7 @@ lmm.doy_LE_AMJ_df<-as.data.frame(summary(lmm.doy_LE_AMJ)$coef) %>%
   mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
 
 
-###low, MJ
+###low elevation, MJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -235,9 +235,9 @@ lmm_low.ele_ery <- rbind(lmm.doy_LE_MA_df, lmm.doy_LE_MAM_df, lmm.doy_LE_MAMJ_df
 write.csv(lmm_low.ele_ery, 'C:/Users/User/Documents/Pheno_outputs/split_by_elevation/erythronium/lmm_low.ele_ery.csv')
 
 ===============================================================================
-  ##MID elevations, MA
+  ##mid elevations, MA
   
-  climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
 climate_new <- climate_new %>%
   mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
@@ -267,7 +267,7 @@ lmm.doy_ME_MA_df<-as.data.frame(summary(lmm.doy_ME_MA)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
 
-###mid, MAM
+###mid elevation, MAM
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -299,7 +299,7 @@ lmm.doy_ME_MAM_ery_df<-as.data.frame(summary(lmm.doy_ME_MAM_ery)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
 
-###MAMJ,mid
+###mid elevation, MAMJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -331,7 +331,7 @@ lmm.doy_ME_MAMJ_df<-as.data.frame(summary(lmm.doy_ME_MAMJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
 
-###mid, AM
+###mid elevation, AM
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -363,7 +363,7 @@ lmm.doy_ME_AM_df<-as.data.frame(summary(lmm.doy_ME_AM)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
 
-###mid, AMJ
+###mid elevation, AMJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -397,7 +397,7 @@ lmm.doy_ME_AMJ_df<-as.data.frame(summary(lmm.doy_ME_AMJ)$coef) %>%
   mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
 
 
-### MJ, mid
+###mid elevation, MJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -437,9 +437,9 @@ write.csv(lmm_mid.ele_ery, 'C:/Users/User/Documents/Pheno_outputs/split_by_eleva
 
 
 =============================================================================
-  ### high, MA
+###high elevation, MA
   
-  climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
 climate_new <- climate_new %>%
   mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
@@ -469,7 +469,7 @@ lmm.doy_HE_MA_df<-as.data.frame(summary(lmm.doy_HE_MA)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
 
-###HIGH, MAM
+###high elevation, MAM
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -502,7 +502,7 @@ lmm.doy_HE_MAM_ery_df<-as.data.frame(summary(lmm.doy_HE_MAM_ery)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
 
-###MAMJ,high
+###high elevation, MAMJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -535,7 +535,7 @@ lmm.doy_HE_MAMJ_df<-as.data.frame(summary(lmm.doy_HE_MAMJ)$coef) %>%
   mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
 
 
-###AM, HIGH
+###high elevation, AM
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -568,7 +568,7 @@ lmm.doy_HE_AM_df<-as.data.frame(summary(lmm.doy_HE_AM)$coef) %>%
   mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
 
 
-###high, AMJ
+###high elevation, AMJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
@@ -603,7 +603,7 @@ lmm.doy_HE_AMJ_df<-as.data.frame(summary(lmm.doy_HE_AMJ)$coef) %>%
 
 
 
-###MJ, high
+###high elevation, MJ
 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
