@@ -9,18 +9,18 @@ library(lme4)
 library(MuMIn)
 library(tidyverse)
 
-
+# Canopy DOYs
 canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
   mutate(Strata = 'Canopy',
          Site = gsub('C', '', Site)) %>%
   rename(DOY = DOY_canopy.greenup) 
 
-
+# Erythronium DOYs
 ery <- read.csv("C:/Users/User/Documents/erythronium/Extracted_DOYs_50/Ery_final_DOY_50.csv", header=TRUE) %>%
   mutate(Strata ='Understory',
          Site = gsub('G','',Site))
 
-# Climate data as extracted from Charlotte's data
+# Climate data 
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
 
