@@ -8,6 +8,7 @@ library(ggplot2)
 library(lme4)
 library(MuMIn)
 library(tidyverse)
+library(lmerTest)
 
 # Canopy DOYs
 canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
@@ -68,9 +69,6 @@ write.csv(PhenoDOY_ery, 'C:/Users/User/Documents/Pheno_outputs/PhenoDOY_ery.csv'
 
 # Run LMMs for each previousy identified spring period using T_spatial_centred and T_temproal 
 
-install.packages("lmerTest")
-library(lmerTest)
-library(lme4)
 
 lmmDOY_MA_ery <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_ery %>% filter(SpringPeriod == 'MA')), REML = TRUE)
 summary(lmmDOY_MA_ery)
