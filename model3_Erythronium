@@ -1,6 +1,7 @@
-###Understory species - Erythronium
-##Methodology:2.6.2.Identifying the time periods for which temperature best explains phenology
-###DOY ~ T_temporal + (1| Site) + (1| Year)
+#Author:Hasanki Gamhewa, email:hasankitg@gmail.com
+#Title:Code for the manuscript "The duration of high spring light for understory plants: contrasting responses to spatial and temporal temperature variation"
+
+3.Temporal temperature fluctuations on vegetative phenology across strata at each elevation: Erythronium and canopy
 
 
 # Load required packages
