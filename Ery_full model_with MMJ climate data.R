@@ -117,7 +117,5 @@ lmm.full_ery <- rbind(lmmDOY_MA_ery, lmmDOY_MAM_ery, lmmDOY_MAMJ_ery, lmmDOY_AM_
 
 
 
-ggsave("C:/Users/User/Desktop/ery_fulmodel_temporal.jpg", plot = plotMAM_temporal, width = 4, height = 4, dpi = 300)
-
 
 
