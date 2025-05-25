@@ -14,5 +14,12 @@ For each understory species (Erythronium and Trillium)
 3.Temporal temperature fluctuations on vegetative phenology across strata at each elevation
 
 
+# How to use
 
+This repository is meant to be a reasonbly well-documented record of the analyses carries out in the manuscript detailed above.
+
+# Associated data products
+
+The associated data are publically archieved in the Dryad repository. Gamhewa et al. (2025). .............
+DOI: 
 
