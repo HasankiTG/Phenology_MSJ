@@ -1,6 +1,9 @@
-##Understory(Erythronium)-canopy full model
-##Methodology:2.6.3.The effect of temperature on phenology of canopy closure and understory leaf expansion
-##DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year)
+#Author:Hasanki Gamhewa, email:hasankitg@gmail.com
+#Title:Code for the manuscript "The duration of high spring light for understory plants: contrasting responses to spatial and temporal temperature variation"
+
+2.The effect of temperature (spatial and temporal) on vegetative phenology across strata: Erythronium and canopy
+
+
 
 # Load required packages
 library(dplyr)
