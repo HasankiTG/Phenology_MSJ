@@ -1,0 +1,1244 @@
+# Load Packages
+library(dplyr)
+library(ggplot2)
+library(lme4)
+library(MuMIn)
+library(corrplot)
+library(tidyverse)
+
+
+canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
+  mutate(Strata = 'Canopy',
+         Site = gsub('C', '', Site)) %>%
+  rename(DOY = DOY_canopy.greenup) 
+
+
+tril <- read.csv("C:/Users/User/Documents/trillium/Trillium_DOY_50.csv", header=TRUE) %>%
+  mutate(Strata ='Understory',
+         Site = gsub('G','',Site))
+
+##low elevations
+###Understory, MA
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MA))
+
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MA - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(1,3))
+
+
+lmm.doy_LEU_MA <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEU, REML = TRUE)
+AICc(lmm.doy_LEU_MA) 
+summary(lmm.doy_LEU_MA)
+
+lmm.doy_LEU_MA_df<-as.data.frame(summary(lmm.doy_LEU_MA)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
+
+
+
+###Understory, MAM
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAM))
+
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAM - T_spatial)
+
+
+# Merge Datasets 
+PhenoDOY_LEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(1,3))
+
+lmm.doy_LEU_MAM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEU, REML = TRUE)
+AICc(lmm.doy_LEU_MAM) 
+summary(lmm.doy_LEU_MAM)
+
+lmm.doy_LEU_MAM_df<-as.data.frame(summary(lmm.doy_LEU_MAM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
+
+
+###Understory, MAMJ
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAMJ))
+
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(1,3))
+
+lmm.doy_LEU_MAMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEU, REML = TRUE)
+AICc(lmm.doy_LEU_MAMJ) 
+summary(lmm.doy_LEU_MAMJ)
+
+lmm.doy_LEU_MAMJ_df<-as.data.frame(summary(lmm.doy_LEU_MAMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
+
+###Understory, AM
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AM))
+
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(1,3))
+
+lmm.doy_LEU_AM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEU, REML = TRUE)
+AICc(lmm.doy_LEU_AM)
+summary(lmm.doy_LEU_AM)
+
+lmm.doy_LEU_AM_df<-as.data.frame(summary(lmm.doy_LEU_AM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
+
+
+###Understory, AMJ
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AMJ))
+
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(1,3))
+
+lmm.doy_LEU_AMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEU, REML = TRUE)
+AICc(lmm.doy_LEU_AMJ)
+summary(lmm.doy_LEU_AMJ)
+
+lmm.doy_LEU_AMJ_df<-as.data.frame(summary(lmm.doy_LEU_AMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
+
+
+###Understory, MJ
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MJ))
+
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(1,3))
+
+lmm.doy_LEU_MJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEU, REML = TRUE)
+AICc(lmm.doy_LEU_MJ)
+summary(lmm.doy_LEU_MJ)
+
+lmm.doy_LEU_MJ_df<-as.data.frame(summary(lmm.doy_LEU_MJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
+
+#Bind dataframes together
+lmm_strata_low.ele_tril <- rbind(lmm.doy_LEU_MA_df, lmm.doy_LEU_MAM_df, lmm.doy_LEU_MAMJ_df, lmm.doy_LEU_AM_df, lmm.doy_LEU_AMJ_df, lmm.doy_LEU_MJ_df)
+
+write.csv(lmm_strata_low.ele_tril, 'C:/Users/User/Documents/Pheno_outputs/strata_elevation analysis/trillium/lmm_strata_low.ele_tril.csv')
+
+===============================================================================
+  #Canopy, low ele - MA
+  
+  climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MA))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MA - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(1,3))
+
+lmm.doy_LEC_MA <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEC, REML = TRUE)
+AICc(lmm.doy_LEC_MA) 
+summary(lmm.doy_LEC_MA)
+
+lmm.doy_LEC_MA_df<-as.data.frame(summary(lmm.doy_LEC_MA)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
+
+
+###CANOPY, MAM, low
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAM - T_spatial)
+
+
+# Merge Datasets 
+PhenoDOY_LEC <- full_join(canopy,tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(1,3))
+
+lmm.doy_LEC_MAM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEC, REML = TRUE)
+AICc(lmm.doy_LEC_MAM)
+summary(lmm.doy_LEC_MAM)
+
+lmm.doy_LEC_MAM_df<-as.data.frame(summary(lmm.doy_LEC_MAM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
+
+
+
+###canopy, MAMJ,low
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(1,3))
+
+lmm.doy_LEC_MAMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEC, REML = TRUE)
+AICc(lmm.doy_LEC_MAMJ) 
+summary(lmm.doy_LEC_MAMJ)
+
+lmm.doy_LEC_MAMJ_df<-as.data.frame(summary(lmm.doy_LEC_MAMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
+
+###CANOPY, AM, low
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(1,3))
+
+lmm.doy_LEC_AM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEC, REML = TRUE)
+AICc(lmm.doy_LEC_AM)
+summary(lmm.doy_LEC_AM)
+
+lmm.doy_LEC_AM_df<-as.data.frame(summary(lmm.doy_LEC_AM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
+
+###CANOPY, AMJ, low
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(1,3))
+
+lmm.doy_LEC_AMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEC, REML = TRUE)
+AICc(lmm.doy_LEC_AMJ)
+summary(lmm.doy_LEC_AMJ)
+
+lmm.doy_LEC_AMJ_df<-as.data.frame(summary(lmm.doy_LEC_AMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
+
+###CANOPY, MJ, low
+
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_LEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(1,3))
+
+lmm.doy_LEC_MJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_LEC, REML = TRUE)
+AICc(lmm.doy_LEC_MJ) 
+summary(lmm.doy_LEC_MJ)
+
+lmm.doy_LEC_MJ_df<-as.data.frame(summary(lmm.doy_LEC_MJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
+
+#Bind dataframes together
+lmm_strata_low.ele_canopy <- rbind(lmm.doy_LEC_MA_df, lmm.doy_LEC_MAM_df, lmm.doy_LEC_MAMJ_df, lmm.doy_LEC_AM_df, lmm.doy_LEC_AMJ_df, lmm.doy_LEC_MJ_df)
+
+write.csv(lmm_strata_low.ele_canopy, 'C:/Users/User/Documents/Pheno_outputs/strata_elevation analysis/trillium/lmm_strata_low.ele_canopy.csv')
+
+===============================================================================
+  ##MID elevations
+  
+  ###Understory, MA
+  
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MA))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MA - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% 5)
+
+lmm.doy_MEU_MA <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEU, REML = TRUE)
+AICc(lmm.doy_MEU_MA)
+summary(lmm.doy_MEU_MA)
+
+lmm.doy_MEU_MA_df<-as.data.frame(summary(lmm.doy_MEU_MA)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
+
+###Understory, MAM
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% 5)
+
+lmm.doy_MEU_MAM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEU, REML = TRUE)
+AICc(lmm.doy_MEU_MAM)
+summary(lmm.doy_MEU_MAM)
+
+lmm.doy_MEU_MAM_df<-as.data.frame(summary(lmm.doy_MEU_MAM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
+
+###Understory, MAMJ,mid
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% 5)
+
+lmm.doy_MEU_MAMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEU, REML = TRUE)
+AICc(lmm.doy_MEU_MAMJ) 
+summary(lmm.doy_MEU_MAMJ)
+
+lmm.doy_MEU_MAMJ_df<-as.data.frame(summary(lmm.doy_MEU_MAMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
+
+###Understory, AM
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% 5)
+
+lmm.doy_MEU_AM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEU, REML = TRUE)
+AICc(lmm.doy_MEU_AM)
+summary(lmm.doy_MEU_AM)
+
+lmm.doy_MEU_AM_df<-as.data.frame(summary(lmm.doy_MEU_AM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
+
+###Understory, AMJ
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% 5)
+
+
+lmm.doy_MEU_AMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEU, REML = TRUE)
+AICc(lmm.doy_MEU_AMJ) 
+summary(lmm.doy_MEU_AMJ)
+
+lmm.doy_MEU_AMJ_df<-as.data.frame(summary(lmm.doy_MEU_AMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
+
+
+###Understory, MJ, mid
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% 5)
+
+lmm.doy_MEU_MJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEU, REML = TRUE)
+AICc(lmm.doy_MEU_MJ) 
+summary(lmm.doy_MEU_MJ)
+
+lmm.doy_MEU_MJ_df<-as.data.frame(summary(lmm.doy_MEU_MJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
+
+
+#Bind dataframes together
+lmm_strata_mid.ele_tril <- rbind(lmm.doy_MEU_MA_df, lmm.doy_MEU_MAM_df, lmm.doy_MEU_MAMJ_df, lmm.doy_MEU_AM_df, lmm.doy_MEU_AMJ_df, lmm.doy_MEU_MJ_df)
+
+write.csv(lmm_strata_mid.ele_tril, 'C:/Users/User/Documents/Pheno_outputs/strata_elevation analysis/trillium//lmm_strata_mid.ele_tril.csv')
+
+============================================================================
+  ###mid, canopy, MA
+  
+  climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MA))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MA - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% 5)
+
+lmm.doy_MEC_MA <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEC, REML = TRUE)
+AICc(lmm.doy_MEC_MA)
+summary(lmm.doy_MEC_MA)
+
+lmm.doy_MEC_MA_df<-as.data.frame(summary(lmm.doy_MEC_MA)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
+
+
+###mid, canopy, MAM
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% 5)
+
+lmm.doy_MEC_MAM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEC, REML = TRUE)
+AICc(lmm.doy_MEC_MAM)
+summary(lmm.doy_MEC_MAM)
+
+lmm.doy_MEC_MAM_df<-as.data.frame(summary(lmm.doy_MEC_MAM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
+
+###Canopy, MAMJ,mid
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAMJ - T_spatial)
+
+
+# Merge Datasets 
+PhenoDOY_MEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% 5)
+
+lmm.doy_MEC_MAMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEC, REML = TRUE)
+AICc(lmm.doy_MEC_MAMJ) 
+summary(lmm.doy_MEC_MAMJ)
+
+lmm.doy_MEC_MAMJ_df<-as.data.frame(summary(lmm.doy_MEC_MAMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
+
+###mid, canopy, AM
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% 5)
+
+lmm.doy_MEC_AM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEC, REML = TRUE)
+AICc(lmm.doy_MEC_AM)
+summary(lmm.doy_MEC_AM)
+
+lmm.doy_MEC_AM_df<-as.data.frame(summary(lmm.doy_MEC_AM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
+
+##MID, CANOPY, AMJ
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% 5)
+
+lmm.doy_MEC_AMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEC, REML = TRUE)
+AICc(lmm.doy_MEC_AMJ) 
+summary(lmm.doy_MEC_AMJ)
+
+lmm.doy_MEC_AMJ_df<-as.data.frame(summary(lmm.doy_MEC_AMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
+
+###canopy, MJ, mid
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_MEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% 5)
+
+lmm.doy_MEC_MJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_MEC, REML = TRUE)
+AICc(lmm.doy_MEC_MJ) 
+summary(lmm.doy_MEC_MJ)
+
+lmm.doy_MEC_MJ_df<-as.data.frame(summary(lmm.doy_MEC_MJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
+
+#Bind dataframes together
+lmm_strata_mid.ele_canopy <- rbind(lmm.doy_MEC_MA_df, lmm.doy_MEC_MAM_df, lmm.doy_MEC_MAMJ_df, lmm.doy_MEC_AM_df, lmm.doy_MEC_AMJ_df, lmm.doy_MEC_MJ_df)
+
+write.csv(lmm_strata_mid.ele_canopy , 'C:/Users/User/Documents/Pheno_outputs/strata_elevation analysis/trillium//lmm_strata_mid.ele_canopy.csv')
+
+=============================================================================
+### high, Understory, MA
+  
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MA))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MA - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(7,8))
+
+lmm.doy_HEU_MA <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEU, REML = TRUE)
+AICc(lmm.doy_HEU_MA)
+summary(lmm.doy_HEU_MA)
+
+lmm.doy_HEU_MA_df<-as.data.frame(summary(lmm.doy_HEU_MA)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
+
+###HIGH, Understory, MAM
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAM - T_spatial)
+
+
+# Merge Datasets 
+PhenoDOY_HEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(7,8))
+
+lmm.doy_HEU_MAM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEU, REML = TRUE)
+AICc(lmm.doy_HEU_MAM)
+summary(lmm.doy_HEU_MAM)
+
+lmm.doy_HEU_MAM_df<-as.data.frame(summary(lmm.doy_HEU_MAM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
+
+###Understory, MAMJ,high
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(7,8))
+
+lmm.doy_HEU_MAMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEU, REML = TRUE)
+AICc(lmm.doy_HEU_MAMJ) 
+summary(lmm.doy_HEU_MAMJ)
+
+lmm.doy_HEU_MAMJ_df<-as.data.frame(summary(lmm.doy_HEU_MAMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
+
+
+###Understory, AM, HIGH
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(7,8))
+
+lmm.doy_HEU_AM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEU, REML = TRUE)
+AICc(lmm.doy_HEU_AM)
+summary(lmm.doy_HEU_AM)
+
+lmm.doy_HEU_AM_df<-as.data.frame(summary(lmm.doy_HEU_AM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
+
+
+###high, understory,AMJ
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(7,8))
+
+
+lmm.doy_HEU_AMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEU, REML = TRUE)
+AICc(lmm.doy_HEU_AMJ) 
+summary(lmm.doy_HEU_AMJ)
+
+lmm.doy_HEU_AMJ_df<-as.data.frame(summary(lmm.doy_HEU_AMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
+
+
+
+###Understory, MJ, high
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEU <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Understory' & Plot %in% c(7,8))
+
+lmm.doy_HEU_MJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEU, REML = TRUE)
+AICc(lmm.doy_HEU_MJ) 
+summary(lmm.doy_HEU_MJ)
+
+lmm.doy_HEU_MJ_df<-as.data.frame(summary(lmm.doy_HEU_MJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
+
+
+#Bind dataframes together
+
+lmm_strata_high.ele_tril <- rbind(lmm.doy_HEU_MA_df, lmm.doy_HEU_MAM_df, lmm.doy_HEU_MAMJ_df, lmm.doy_HEU_AM_df, lmm.doy_HEU_AMJ_df, lmm.doy_HEU_MJ_df)
+
+write.csv(lmm_strata_high.ele_tril, 'C:/Users/User/Documents/Pheno_outputs/strata_elevation analysis/trillium//lmm_strata_high.ele_tril.csv')
+
+=============================================================================
+  ###Canopy, MA, HIGH
+  
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MA))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MA - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(7,8))
+
+lmm.doy_HEC_MA <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEC, REML = TRUE)
+AICc(lmm.doy_HEC_MA)
+summary(lmm.doy_HEC_MA)
+
+lmm.doy_HEC_MA_df<-as.data.frame(summary(lmm.doy_HEC_MA)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
+
+###HIGH, Canopy, MAM
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(7,8))
+
+lmm.doy_HEC_MAM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEC, REML = TRUE)
+AICc(lmm.doy_HEC_MAM)
+summary(lmm.doy_HEC_MAM)
+
+lmm.doy_HEC_MAM_df<-as.data.frame(summary(lmm.doy_HEC_MAM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
+
+###Canopy, MAMJ,HIGH
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MAMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MAMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MAMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(7,8))
+
+lmm.doy_HEC_MAMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEC, REML = TRUE)
+AICc(lmm.doy_HEC_MAMJ) 
+summary(lmm.doy_HEC_MAMJ)
+
+lmm.doy_HEC_MAMJ_df<-as.data.frame(summary(lmm.doy_HEC_MAMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
+
+###Canopy, AM, HIGH
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AM')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AM))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AM - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(7,8))
+
+lmm.doy_HEC_AM <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEC, REML = TRUE)
+AICc(lmm.doy_HEC_AM)
+summary(lmm.doy_HEC_AM)
+
+lmm.doy_HEC_AM_df<-as.data.frame(summary(lmm.doy_HEC_AM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
+
+##high, canopy, AMJ
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_AMJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_AMJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_AMJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(7,8))
+
+
+lmm.doy_HEC_AMJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEC, REML = TRUE)
+AICc(lmm.doy_HEC_AMJ) 
+summary(lmm.doy_HEC_AMJ)
+
+lmm.doy_HEC_AMJ_df<-as.data.frame(summary(lmm.doy_HEC_AMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
+
+
+###Canopy, MJ, high
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
+         Site = gsub('-','', Site))%>%
+  select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MJ')%>%
+  group_by(Site) %>%
+  mutate(T_spatial = mean(T_spring_MJ))
+
+climate_new <- climate_new %>%
+  mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
+  mutate(T_temporal = T_spring_MJ - T_spatial)
+
+# Merge Datasets 
+PhenoDOY_HEC <- full_join(canopy, tril) %>%
+  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(Strata == 'Canopy' & Plot %in% c(7,8))
+
+lmm.doy_HEC_MJ <- lmer(DOY ~ T_temporal + (1| Site) + (1| Year), data = PhenoDOY_HEC, REML = TRUE)
+AICc(lmm.doy_HEC_MJ) 
+summary(lmm.doy_HEC_MJ)
+
+lmm.doy_HEC_MJ_df<-as.data.frame(summary(lmm.doy_HEC_MJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
+
+
+
+#Bind dataframes together
+
+lmm_strata_high.ele_canopy <- rbind(lmm.doy_HEC_MA_df, lmm.doy_HEC_MAM_df, lmm.doy_HEC_MAMJ_df, lmm.doy_HEC_AM_df, lmm.doy_HEC_AMJ_df, lmm.doy_HEC_MJ_df)
+
+write.csv(lmm_strata_high.ele_canopy , 'C:/Users/User/Documents/Pheno_outputs/strata_elevation analysis/trillium//lmm_strata_high.ele_canopy.csv')
+
+
