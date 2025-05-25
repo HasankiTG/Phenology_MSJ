@@ -1,6 +1,8 @@
-#Trillium-canopy full model
-#MMJ climate data(Sent by Charlotte)
-#years: 2017-2023
+#Author:Hasanki Gamhewa, email:hasankitg@gmail.com
+#Title:Code for the manuscript "The duration of high spring light for understory plants: contrasting responses to spatial and temporal temperature variation"
+
+2.The effect of temperature (spatial and temporal) on vegetative phenology across strata: Erythronium and canopy
+
 
   
 canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
