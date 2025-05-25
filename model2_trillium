@@ -1,0 +1,101 @@
+#Trillium-canopy full model
+#MMJ climate data(Sent by Charlotte)
+#years: 2017-2023
+
+  
+canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
+  mutate(Strata = 'Canopy',
+         Site = gsub('C', '', Site)) %>%
+  rename(DOY = DOY_canopy.greenup) 
+
+
+tril <- read.csv("C:/Users/User/Documents/trillium/Trillium_DOY_50.csv", header=TRUE) %>%
+  mutate(Strata ='Understory',
+         Site = gsub('G','',Site))
+
+# Climate data as extracted from Charlotte's data
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+
+
+# Calculate T_spring for each site-year combinations
+climate_new <- climate_new %>%
+  mutate(T_spring_MA =rowMeans(climate_new[,7:8]),
+         T_spring_MAM = rowMeans(climate_new[,7:9]),
+         T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+         T_spring_AM = rowMeans(climate_new[,8:9]),
+         T_spring_AMJ = rowMeans(climate_new[,8:10]),
+         T_spring_MJ = rowMeans(climate_new[,9:10]),
+         Site = gsub('-','', Site))%>%
+         select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA', 'T_spring_MAM', 'T_spring_MAMJ', 'T_spring_AM', 'T_spring_AMJ', 'T_spring_MJ')
+
+
+# Mean center corrected climate data and calculate T_spatial and T_temporal for each spring period
+# 1| Reformat climate corrected to long structure
+climate_new2 <- climate_new %>%
+  pivot_longer(
+    cols = starts_with("T_spring"),
+    names_to = "SpringPeriod",
+    names_prefix = "T_spring_",
+    values_to = "T_spring")
+
+# 2| Calculate mean centred T_spatial and T_temporal for each Spring Period
+climate_new2_centred <- climate_new2 %>%
+  group_by(Site, SpringPeriod) %>%
+  mutate(T_spatial = mean(T_spring)) %>% 
+  group_by(SpringPeriod) %>%
+  mutate(T_spatial_mean = mean(T_spatial)) %>%
+  mutate(T_spatial_centred = T_spatial - T_spatial_mean) %>%
+  mutate(T_temporal = T_spring - T_spatial)
+
+# Merge with Phenology Dataframes
+PhenoDOY_new <- full_join(canopy, tril) %>%
+  full_join(climate_new2_centred, by = c("Year", "Site", "Transect", "Plot")) %>%
+  group_by(Site) %>%
+  mutate(Plot = as.factor(Plot),
+         Plant = as.factor(Plant),
+         Year = as.factor(Year))%>%
+  filter(DOY != 'NA')
+
+write.csv(PhenoDOY_new, 'C:/Users/User/Documents/Pheno_outputs/PhenoDOY_newclimate.csv', row.names = FALSE)
+
+
+# Run LMMs for each previousy identified spring period using T_spatial_centred and T_temproal 
+
+library(lmerTest)
+library(lme4)
+
+lmmDOY_MAM <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_new %>% filter(SpringPeriod == 'MAM')), REML = TRUE)
+summary(lmmDOY_MAM)
+AICc(lmmDOY_MAM)
+lmmDOY_MAM<-as.data.frame(summary(lmmDOY_MAM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
+
+lmmDOY_MAMJ <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_new %>% filter(SpringPeriod == 'MAMJ')), REML = TRUE)
+summary(lmmDOY_MAMJ)
+lmmDOY_MAMJ<-as.data.frame(summary(lmmDOY_MAMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
+
+lmmDOY_AM <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_new %>% filter(SpringPeriod == 'AM')), REML = TRUE)
+summary(lmmDOY_AM)
+lmmDOY_AM<-as.data.frame(summary(lmmDOY_AM)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
+
+lmmDOY_AMJ <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_new %>% filter(SpringPeriod == 'AMJ')), REML = TRUE)
+summary(lmmDOY_AMJ)
+lmmDOY_AMJ<-as.data.frame(summary(lmmDOY_AMJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
+
+lmmDOY_MJ <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_new %>% filter(SpringPeriod == 'MJ')), REML = TRUE)
+summary(lmmDOY_MJ)
+lmmDOY_MJ<-as.data.frame(summary(lmmDOY_MJ)$coef) %>%
+  rownames_to_column('Fixed_Effects') %>%
+  mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
+
+lmmSpringPeriods <- rbind(lmmDOY_MAM, lmmDOY_MAMJ, lmmDOY_AM, lmmDOY_AMJ, lmmDOY_MJ)
+
+
+
