@@ -1,3 +1,9 @@
+#Author:Hasanki Gamhewa, email:hasankitg@gmail.com
+#Title:Code for the manuscript "The duration of high spring light for understory plants: contrasting responses to spatial and temporal temperature variation"
+
+1.Identifying the time periods for which temperature best explains phenology:Trillium and canopy
+
+
 # Load Packages
 library(dplyr)
 library(ggplot2)
