@@ -72,8 +72,6 @@ PhenoDOY_new <- full_join(canopy, tril) %>%
 
 # Run LMMs for each previousy identified spring period using T_spatial_centred and T_temproal 
 
-library(lmerTest)
-library(lme4)
 
 lmmDOY_MAM <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_new %>% filter(SpringPeriod == 'MAM')), REML = TRUE)
 summary(lmmDOY_MAM)
