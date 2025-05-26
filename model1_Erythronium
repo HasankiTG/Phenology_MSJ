@@ -23,9 +23,14 @@ ery <- read.csv("C:/Users/User/Documents/erythronium/Extracted_DOYs_50/Ery_final
   mutate(Strata ='Understory',
          Site = gsub('G','',Site))
 
+
+# Run LMMs for each spring period, elevation and strata 
+
+
 ##low elevation
 ##Understory, MA
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
 climate_new <- climate_new %>%
@@ -36,11 +41,12 @@ climate_new <- climate_new %>%
   mutate(T_spatial = mean(T_spring_MA))
 
 
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MA - T_spatial)
       
-# Merge Datasets 
+# Merge Datasets - canopy, erythronium datasets with climate data
 PhenoDOY_LEU <- full_join(canopy, ery) %>%
  left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
