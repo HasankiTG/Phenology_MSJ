@@ -66,8 +66,6 @@ PhenoDOY_ery <- full_join(canopy, ery) %>%
          Year = as.factor(Year))%>%
   filter(DOY != 'NA')
 
-write.csv(PhenoDOY_ery, 'C:/Users/User/Documents/Pheno_outputs/PhenoDOY_ery.csv', row.names = FALSE)
-
 
 # Run LMMs for each previousy identified spring period using T_spatial_centred and T_temproal 
 
