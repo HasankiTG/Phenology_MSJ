@@ -7,7 +7,7 @@ The repository contains seven R scripts.
 
 For each understory species (Erythronium and Trillium)
 
-1.Identifying the time periods for which temperature best explains phenology
+1.Identifying the time periods for which temperature best explains phenology (model_1
 
 2.The effect of temperature (spatial and temporal) on vegetative phenology across strata
 
