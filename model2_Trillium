@@ -41,8 +41,7 @@ climate_new <- climate_new %>%
          select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA', 'T_spring_MAM', 'T_spring_MAMJ', 'T_spring_AM', 'T_spring_AMJ', 'T_spring_MJ')
 
 
-# Mean center corrected climate data and calculate T_spatial and T_temporal for each spring period
-# 1| Reformat climate corrected to long structure
+# Reformat climate corrected to long structure
 climate_new2 <- climate_new %>%
   pivot_longer(
     cols = starts_with("T_spring"),
@@ -50,7 +49,7 @@ climate_new2 <- climate_new %>%
     names_prefix = "T_spring_",
     values_to = "T_spring")
 
-# 2| Calculate mean centred T_spatial and T_temporal for each Spring Period
+# Calculate mean centred T_spatial and T_temporal for each Spring Period
 climate_new2_centred <- climate_new2 %>%
   group_by(Site, SpringPeriod) %>%
   mutate(T_spatial = mean(T_spring)) %>% 
@@ -69,8 +68,7 @@ PhenoDOY_new <- full_join(canopy, tril) %>%
   filter(DOY != 'NA')
 
 
-
-# Run LMMs for each previousy identified spring period using T_spatial_centred and T_temproal 
+# Run LMMs for each previousy identified best spring periods using T_spatial_centred and T_temproal 
 
 
 lmmDOY_MAM <- lmer(DOY ~ T_spatial_centred + T_temporal + Strata + T_spatial_centred*Strata + T_temporal*Strata + (1| Site) + (1| Year), data = (PhenoDOY_new %>% filter(SpringPeriod == 'MAM')), REML = TRUE)
