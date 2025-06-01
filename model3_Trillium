@@ -13,21 +13,25 @@ library(tidyverse)
 library(lmerTest)
 
 
-
+#Canopy DOYs
 canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
   mutate(Strata = 'Canopy',
          Site = gsub('C', '', Site)) %>%
   rename(DOY = DOY_canopy.greenup) 
 
-
+#Trillium DOYs
 tril <- read.csv("C:/Users/User/Documents/trillium/Trillium_DOY_50.csv", header=TRUE) %>%
   mutate(Strata ='tril',
          Site = gsub('G','',Site))
 
+# Run LMMs for each spring period, and elevation 
+
 ##low, MA
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
          Site = gsub('-','', Site))%>%
@@ -35,12 +39,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MA))
 
-
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MA - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter low elevation data
 PhenoDOY_LE_MA <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -48,10 +53,13 @@ PhenoDOY_LE_MA <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% c(1,3))
 
+#Run the LMM 
 lmm.doy_LE_MA <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_LE_MA, REML = TRUE)
 AICc(lmm.doy_LE_MA) 
 summary(lmm.doy_LE_MA)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MA'
 lmm.doy_LE_MA_df<-as.data.frame(summary(lmm.doy_LE_MA)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
@@ -60,8 +68,10 @@ lmm.doy_LE_MA_df<-as.data.frame(summary(lmm.doy_LE_MA)$coef) %>%
 
 ###low, MAM
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
          Site = gsub('-','', Site))%>%
@@ -69,13 +79,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MAM))
 
-
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MAM - T_spatial)
 
-
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter low elevation data
 PhenoDOY_LE <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -84,10 +94,13 @@ PhenoDOY_LE <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% c(1,3))
 
+#Run the LMM 
 lmm.doy_LE_MAM <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_LE, REML = TRUE)
 AICc(lmm.doy_LE_MAM) 
 summary(lmm.doy_LE_MAM)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MAM'
 lmm.doy_LE_MAM_df<-as.data.frame(summary(lmm.doy_LE_MAM)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
@@ -95,8 +108,10 @@ lmm.doy_LE_MAM_df<-as.data.frame(summary(lmm.doy_LE_MAM)$coef) %>%
 
 ###low, MAMJ
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
          Site = gsub('-','', Site))%>%
@@ -104,12 +119,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MAMJ))
 
-
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MAMJ - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter low elevation data
 PhenoDOY_LE <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -118,18 +134,24 @@ PhenoDOY_LE <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% c(1,3))
 
+#Run the LMM 
 lmm.doy_LE_MAMJ <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_LE, REML = TRUE)
 AICc(lmm.doy_LE_MAMJ) 
 summary(lmm.doy_LE_MAMJ)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MAMJ'
 lmm.doy_LE_MAMJ_df<-as.data.frame(summary(lmm.doy_LE_MAMJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
 
+
 ###low, AM
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
          Site = gsub('-','', Site))%>%
@@ -137,12 +159,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_AM))
 
-
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_AM - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter low elevation data
 PhenoDOY_LE <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -151,10 +174,13 @@ PhenoDOY_LE <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% c(1,3))
 
+#Run the LMM
 lmm.doy_LE_AM <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_LE, REML = TRUE)
 AICc(lmm.doy_LE_AM)
 summary(lmm.doy_LE_AM)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'AM'
 lmm.doy_LE_AM_df<-as.data.frame(summary(lmm.doy_LE_AM)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
@@ -162,8 +188,10 @@ lmm.doy_LE_AM_df<-as.data.frame(summary(lmm.doy_LE_AM)$coef) %>%
 
 ###low, AMJ
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
          Site = gsub('-','', Site))%>%
@@ -171,12 +199,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_AMJ))
 
-
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_AMJ - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter low elevation data
 PhenoDOY_LE <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -185,10 +214,13 @@ PhenoDOY_LE <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% c(1,3))
 
+#Run the LMM
 lmm.doy_LE_AMJ <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_LE, REML = TRUE)
 AICc(lmm.doy_LE_AMJ)
 summary(lmm.doy_LE_AMJ)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'AMJ'
 lmm.doy_LE_AMJ_df<-as.data.frame(summary(lmm.doy_LE_AMJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
@@ -196,8 +228,10 @@ lmm.doy_LE_AMJ_df<-as.data.frame(summary(lmm.doy_LE_AMJ)$coef) %>%
 
 ###low, MJ
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
          Site = gsub('-','', Site))%>%
@@ -205,12 +239,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MJ))
 
-
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MJ - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter low elevation data
 PhenoDOY_LE <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -219,10 +254,13 @@ PhenoDOY_LE <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% c(1,3))
 
+#Run the LMM
 lmm.doy_LE_MJ <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_LE, REML = TRUE)
 AICc(lmm.doy_LE_MJ)
 summary(lmm.doy_LE_MJ)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MJ'
 lmm.doy_LE_MJ_df<-as.data.frame(summary(lmm.doy_LE_MJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
@@ -230,13 +268,14 @@ lmm.doy_LE_MJ_df<-as.data.frame(summary(lmm.doy_LE_MJ)$coef) %>%
 #Bind dataframes together
 lmm_low.ele_tril <- rbind(lmm.doy_LE_MA_df, lmm.doy_LE_MAM_df, lmm.doy_LE_MAMJ_df, lmm.doy_LE_AM_df, lmm.doy_LE_AMJ_df, lmm.doy_LE_MJ_df)
 
-write.csv(lmm_low.ele_tril, 'C:/Users/User/Documents/Pheno_outputs/split_by_elevation/trillium/lmm_low.ele_tril.csv')
 
-===============================================================================
-  ##MID elevations, MA
-  
+==================================================================================================================
+##mid elevations, MA
+
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MA = rowMeans(climate_new[,7:8]),
          Site = gsub('-','', Site))%>%
@@ -244,11 +283,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MA))
 
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MA - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter mid elevation data
 PhenoDOY_ME <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -257,18 +298,24 @@ PhenoDOY_ME <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% 5)
 
+#Run the LMM
 lmm.doy_ME_MA <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_ME, REML = TRUE)
 AICc(lmm.doy_ME_MA)
 summary(lmm.doy_ME_MA)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MA'
 lmm.doy_ME_MA_df<-as.data.frame(summary(lmm.doy_ME_MA)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MA', .before ='Fixed_Effects')
 
+
 ###mid, MAM
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MAM = rowMeans(climate_new[,7:9]),
          Site = gsub('-','', Site))%>%
@@ -276,11 +323,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MAM))
 
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MAM - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter mid elevation data
 PhenoDOY_ME <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -289,18 +338,23 @@ PhenoDOY_ME <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% 5)
 
+#Run the LMM
 lmm.doy_ME_MAM <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_ME, REML = TRUE)
 AICc(lmm.doy_ME_MAM)
 summary(lmm.doy_ME_MAM)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MAM'
 lmm.doy_ME_MAM_df<-as.data.frame(summary(lmm.doy_ME_MAM)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAM', .before ='Fixed_Effects')
 
-###MAMJ,mid
+###mid elevation, MAMJ
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MAMJ = rowMeans(climate_new[,7:10]),
          Site = gsub('-','', Site))%>%
@@ -308,11 +362,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MAMJ))
 
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MAMJ - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter mid elevation data
 PhenoDOY_ME <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -321,18 +377,23 @@ PhenoDOY_ME <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% 5)
 
+#Run the LMM
 lmm.doy_ME_MAMJ <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_ME, REML = TRUE)
 AICc(lmm.doy_ME_MAMJ) 
 summary(lmm.doy_ME_MAMJ)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MAMJ'
 lmm.doy_ME_MAMJ_df<-as.data.frame(summary(lmm.doy_ME_MAMJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MAMJ', .before ='Fixed_Effects')
 
 ###mid, AM
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_AM = rowMeans(climate_new[,8:9]),
          Site = gsub('-','', Site))%>%
@@ -340,11 +401,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_AM))
 
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_AM - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter mid elevation data
 PhenoDOY_ME <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -353,18 +416,23 @@ PhenoDOY_ME <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% 5)
 
+#Run the LMM
 lmm.doy_ME_AM <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_ME, REML = TRUE)
 AICc(lmm.doy_ME_AM)
 summary(lmm.doy_ME_AM)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'AM'
 lmm.doy_ME_AM_df<-as.data.frame(summary(lmm.doy_ME_AM)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'AM', .before ='Fixed_Effects')
 
 ###mid, AMJ
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_AMJ = rowMeans(climate_new[,8:10]),
          Site = gsub('-','', Site))%>%
@@ -372,11 +440,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_AMJ))
 
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_AMJ - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter mid elevation data
 PhenoDOY_ME <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -385,11 +455,13 @@ PhenoDOY_ME <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% 5)
 
-
+#Run the LMM
 lmm.doy_ME_AMJ <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_ME, REML = TRUE)
 AICc(lmm.doy_ME_AMJ) 
 summary(lmm.doy_ME_AMJ)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'AMJ'
 lmm.doy_ME_AMJ_df<-as.data.frame(summary(lmm.doy_ME_AMJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'AMJ', .before ='Fixed_Effects')
@@ -397,8 +469,10 @@ lmm.doy_ME_AMJ_df<-as.data.frame(summary(lmm.doy_ME_AMJ)$coef) %>%
 
 ###MJ, mid
 
+#climate data
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
+#Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
   mutate(T_spring_MJ = rowMeans(climate_new[,9:10]),
          Site = gsub('-','', Site))%>%
@@ -406,11 +480,13 @@ climate_new <- climate_new %>%
   group_by(Site) %>%
   mutate(T_spatial = mean(T_spring_MJ))
 
+# Centre T_spatial data and calculate T_temporal
 climate_new <- climate_new %>%
   mutate(T_spatial_centred = T_spatial - mean (climate_new$T_spatial)) %>%
   mutate(T_temporal = T_spring_MJ - T_spatial)
 
-# Merge Datasets 
+# Merge Datasets - canopy, trillium datasets with climate data
+#Filter mid elevation data
 PhenoDOY_ME <- full_join(canopy, tril) %>%
   left_join(climate_new, by = c("Year", "Site", "Transect", "Plot")) %>%
   group_by(Site) %>%
@@ -419,10 +495,13 @@ PhenoDOY_ME <- full_join(canopy, tril) %>%
          Year = as.factor(Year))%>%
   filter(Plot %in% 5)
 
+#Run the LMM
 lmm.doy_ME_MJ <- lmer(DOY ~ T_temporal + Strata + (T_temporal*Strata) + (1| Site) + (1| Year), data = PhenoDOY_ME, REML = TRUE)
 AICc(lmm.doy_ME_MJ) 
 summary(lmm.doy_ME_MJ)
 
+# Tidy up the fixed effects from the linear mixed model
+# Convert to data frame, keep effect names, and label with spring period 'MJ'
 lmm.doy_ME_MJ_df<-as.data.frame(summary(lmm.doy_ME_MJ)$coef) %>%
   rownames_to_column('Fixed_Effects') %>%
   mutate(SpringPeriod = 'MJ', .before ='Fixed_Effects')
@@ -430,8 +509,6 @@ lmm.doy_ME_MJ_df<-as.data.frame(summary(lmm.doy_ME_MJ)$coef) %>%
 
 #Bind dataframes together
 lmm_mid.ele_tril <- rbind(lmm.doy_ME_MA_df, lmm.doy_ME_MAM_df, lmm.doy_ME_MAMJ_df, lmm.doy_ME_AM_df, lmm.doy_ME_AMJ_df, lmm.doy_ME_MJ_df)
-
-write.csv(lmm_mid.ele_tril, 'C:/Users/User/Documents/Pheno_outputs/split_by_elevation/trillium/lmm_mid.ele_tril.csv')
 
 
 =============================================================================
