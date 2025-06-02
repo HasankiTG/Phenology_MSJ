@@ -8,7 +8,7 @@ library(MuMIn)
 library(corrplot)
 
 #Load climate data
-climate_MMJ <- read.csv("C:/Users/User/Documents/climatena/climate_data_Charlotte.csv", header=TRUE)
+climate_MMJ <- read.csv("C:/Users/User/Documents/climatena/climate_data_JOE.csv", header=TRUE)
 
 #Extract the data required for our analysis
 #Select require columns 
