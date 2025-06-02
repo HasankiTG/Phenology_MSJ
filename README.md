@@ -13,7 +13,7 @@ For each understory species (Erythronium and Trillium)
 
 3.Temporal temperature fluctuations on vegetative phenology across strata at each elevation (model3_Erythronium and model3_Trillium)
 
-7.Climate data
+4.Climate data
 
 
 # How to use
