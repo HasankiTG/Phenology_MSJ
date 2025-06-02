@@ -1,0 +1,65 @@
+#climate data from MMJ climate stations 
+
+#Load required libraries
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(MuMIn)
+library(corrplot)
+
+#Load climate data
+climate_MMJ <- read.csv("C:/Users/User/Documents/climatena/climate_data_Charlotte.csv", header=TRUE)
+
+#Extract the data required for our analysis
+#Select require columns 
+#Rename columns
+#Calculate mean monthly temperature for each site-year combination
+
+climate_MMJ <- climate_MMJ %>%
+  mutate(Year = as.factor(Year)) %>%
+  filter(Year %in% 2017:2023) %>%
+  filter(Plot!= 'A-10' & Plot!= 'B-10')%>%
+  rename(Site = Plot)%>%
+  separate(Site, c('Transect', 'Plot'), remove = FALSE)%>%
+  select(Site, Transect, Plot, Year, Elevation, Month, Day, CombTAvg)%>%
+  group_by(Site, Year, Transect, Plot, Month) %>%
+  summarise(T_month = mean(CombTAvg, na.rm = TRUE))%>%
+  pivot_wider(names_from = Month, values_from = T_month)
+
+write.csv(climate_MMJ, 'C:/Users/User/Documents/climatena/climate_new.csv', row.names = FALSE)
+
+# Calculate T_spring for each site-year combinations
+
+climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE,check.names = F)
+
+climate_new <- climate_new %>%
+  mutate(T_spring_MA =rowMeans(climate_new[,7:8]),
+       T_spring_MAM = rowMeans(climate_new[,7:9]),
+       T_spring_MAMJ = rowMeans(climate_new[,7:10]),
+       T_spring_AM = rowMeans(climate_new[,8:9]),
+       T_spring_AMJ = rowMeans(climate_new[,8:10]),
+       T_spring_MJ = rowMeans(climate_new[,9:10]),
+       Site = gsub('-','', Site))
+
+
+# Examine the degree of linear associations between each spring period (i.e., Pearsons Correlations)
+
+SpringTempCor_new <- cor(climate_new[,18:22])
+colnames(SpringTempCor_new) <- c("MAMa", "MAMaJ", "AMa", "AMaJ","MaJ")
+rownames(SpringTempCor_new) <- c("MAMa", "MAMaJ", "AMa", "AMaJ","MaJ")
+
+# Plot correlations
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+
+png(file="C:/Users/User/Documents/climatena/Springperiods_correlations.png", type = "cairo")
+
+corrplot(SpringTempCor_new, method="color", col=col(200),  
+         type="lower", order="original", 
+         addCoef.col = "black", # Add coefficient of correlation
+         tl.col="black", tl.srt=45, tl.cex = 1, #Text label color and rotation
+         # Combine with significance
+         sig.level = 0.01, insig = "blank", 
+         # hide correlation coefficient on the principal diagonal
+         diag=F, number.cex = 0.9)
+
+dev.off()
