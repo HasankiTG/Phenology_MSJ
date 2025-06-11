@@ -22,6 +22,6 @@ This repository is meant to be a reasonbly well-documented record of the analyse
 
 # Associated data products
 
-The associated data are publically archieved in the Dryad repository. Gamhewa et al. (2025). .............
+The associated data are publically archieved in the Dryad repository. Gamhewa et al. (2025). Available at: 10.5061/dryad.15dv41p88
 DOI: 
 
