@@ -1,6 +1,6 @@
 # Phenology_MSJ
 
-This repository is meant to support the manuscript: "The duration of high spring light for understory plants: contrasting responses to spatial and temporal temperature variation" by Gamhewa et al. (2025) available at .....
+This repository is meant to support the manuscript: "The duration of high spring light for understory plants: contrasting responses to spatial and temporal temperature variation" by Gamhewa et al. (2025).
 
 # Components
 The repository contains seven R scripts.
