@@ -41,6 +41,9 @@ climate_new <- climate_new %>%
        T_spring_MJ = rowMeans(climate_new[,9:10]),
        Site = gsub('-','', Site))
 
+write.csv(climate_new, 'C:/Users/User/Documents/climatena/climate_new.csv', row.names = FALSE)
+*****IMPORTANT: Must save this since this is the climate datafile that we use for models*****
+
 
 # Examine the degree of linear associations between each spring period (i.e., Pearsons Correlations)
 
