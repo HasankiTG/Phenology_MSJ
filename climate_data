@@ -1,4 +1,4 @@
-#climate data from MMJ climate stations 
+#climate data from MSJ climate stations 
 
 #Load required libraries
 library(dplyr)
@@ -8,9 +8,9 @@ library(MuMIn)
 library(corrplot)
 
 #Load climate data
-climate_MMJ <- read.csv("C:/Users/User/Documents/climatena/climate_data_JOE.csv", header=TRUE)
+climate_MMJ <- read.csv("C:/Users/User/Documents/climatena/climate_data.csv", header=TRUE)
 
-#Extract the data required for our analysis
+#Extract the data required for analysis
 #Select require columns 
 #Rename columns
 #Calculate mean monthly temperature for each site-year combination
@@ -21,7 +21,7 @@ climate_MMJ <- climate_MMJ %>%
   filter(Plot!= 'A-10' & Plot!= 'B-10')%>%
   rename(Site = Plot)%>%
   separate(Site, c('Transect', 'Plot'), remove = FALSE)%>%
-  select(Site, Transect, Plot, Year, Elevation, Month, Day, CombTAvg)%>%
+  select(Site, Transect, Plot, Year, Month, Day, CombTAvg)%>%
   group_by(Site, Year, Transect, Plot, Month) %>%
   summarise(T_month = mean(CombTAvg, na.rm = TRUE))%>%
   pivot_wider(names_from = Month, values_from = T_month)
