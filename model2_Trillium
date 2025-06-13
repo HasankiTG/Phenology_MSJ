@@ -30,19 +30,7 @@ tril <- read.csv("C:/Users/User/Documents/trillium/Trillium_DOY_50.csv", header=
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
 
-# Calculate T_spring for each site-year combinations
-climate_new <- climate_new %>%
-  mutate(T_spring_MA =rowMeans(climate_new[,7:8]),
-         T_spring_MAM = rowMeans(climate_new[,7:9]),
-         T_spring_MAMJ = rowMeans(climate_new[,7:10]),
-         T_spring_AM = rowMeans(climate_new[,8:9]),
-         T_spring_AMJ = rowMeans(climate_new[,8:10]),
-         T_spring_MJ = rowMeans(climate_new[,9:10]),
-         Site = gsub('-','', Site))%>%
-         select('Year', 'Site', 'Transect', 'Plot', 'T_spring_MA', 'T_spring_MAM', 'T_spring_MAMJ', 'T_spring_AM', 'T_spring_AMJ', 'T_spring_MJ')
-
-
-# Reformat climate corrected to long structure
+# Reformat climate_new to long structure
 climate_new2 <- climate_new %>%
   pivot_longer(
     cols = starts_with("T_spring"),
