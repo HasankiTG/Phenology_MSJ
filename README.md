@@ -5,7 +5,6 @@ This repository is meant to support the manuscript: "The duration of high spring
 # Components
 The repository contains seven R scripts.
 
-For each understory species (Erythronium and Trillium)
 
 1.Identifying the time periods for which temperature best explains phenology (model1_Erythronium and model1_Trillium)
 
