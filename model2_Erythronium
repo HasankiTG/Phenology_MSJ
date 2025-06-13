@@ -24,6 +24,7 @@ ery <- read.csv("C:/Users/User/Documents/erythronium/Extracted_DOYs_50/Ery_final
          Site = gsub('G','',Site))
 
 # Climate data 
+#*****IMPORTANT: Run the climate_data code first to generate climate_new******
 climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
 
 
