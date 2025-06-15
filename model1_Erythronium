@@ -9,6 +9,7 @@ library(ggplot2)
 library(lme4)
 library(MuMIn)
 library(tidyverse)
+library(lmerTest)
 
 
 #Canopy DOYs
