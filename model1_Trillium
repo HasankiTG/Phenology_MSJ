@@ -73,7 +73,7 @@ lmm.doy_LEU_MA_df<-as.data.frame(summary(lmm.doy_LEU_MA)$coef) %>%
 ###Understory, MAM
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
