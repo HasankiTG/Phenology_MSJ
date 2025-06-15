@@ -13,13 +13,13 @@ library(tidyverse)
 library(lmerTest)
 
 #Canopy DOYs
-canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY.csv", header=TRUE) %>%
+canopy <- read.csv("C:/Users/User/Documents/Canopy_DOY.csv", header=TRUE) %>%
   mutate(Strata = 'Canopy',
          Site = gsub('C', '', Site)) %>%
   rename(DOY = DOY_canopy.greenup) 
 
 #Trillium DOYs
-tril <- read.csv("C:/Users/User/Documents/trillium/Trillium_DOY.csv", header=TRUE) %>%
+tril <- read.csv("C:/Users/User/Documents/Trillium_DOY.csv", header=TRUE) %>%
   mutate(Strata ='Understory',
          Site = gsub('G','',Site))
 
