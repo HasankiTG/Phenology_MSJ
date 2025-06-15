@@ -14,20 +14,20 @@ library(lmerTest)
 
 
 #Canopy DOYs
-canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
+canopy <- read.csv("C:/Users/User/Documents/Canopy_DOY.csv", header=TRUE) %>%
   mutate(Strata = 'Canopy',
          Site = gsub('C', '', Site)) %>%
   rename(DOY = DOY_canopy.greenup) 
 
 
 #Trillium DOYs
-tril <- read.csv("C:/Users/User/Documents/trillium/Trillium_DOY_50.csv", header=TRUE) %>%
+tril <- read.csv("C:/Users/User/Documents/Trillium_DOY.csv", header=TRUE) %>%
   mutate(Strata ='Understory',
          Site = gsub('G','',Site))
 
 # Climate data 
 #*****IMPORTANT: Run the climate_data code first to generate climate_new******
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 
 # Reformat climate_new to long structure
