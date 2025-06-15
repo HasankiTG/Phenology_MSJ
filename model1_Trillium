@@ -10,6 +10,7 @@ library(ggplot2)
 library(lme4)
 library(MuMIn)
 library(tidyverse)
+library(lmerTest)
 
 #Canopy DOYs
 canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
