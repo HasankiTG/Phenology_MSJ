@@ -13,14 +13,14 @@ library(lmerTest)
 
 
 #Canopy DOYs
-canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY.csv", header=TRUE) %>%
+canopy <- read.csv("C:/Users/User/Documents/Canopy_DOY.csv", header=TRUE) %>%
   mutate(Strata = 'Canopy',
          Site = gsub('C', '', Site)) %>%
   rename(DOY = DOY_canopy.greenup) 
 
 
 #Erythronium DOYs
-ery <- read.csv("C:/Users/User/Documents/erythronium/Erythronium_DOY.csv", header=TRUE) %>%
+ery <- read.csv("C:/Users/User/Documents/Erythronium_DOY.csv", header=TRUE) %>%
   mutate(Strata ='Understory',
          Site = gsub('G','',Site))
 
