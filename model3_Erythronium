@@ -13,14 +13,14 @@ library(corrplot)
 library(tidyverse)
 
 #Canopy DOYs
-canopy <- read.csv("C:/Users/User/Documents/canopy image analysis/Canopy_DOY_final.csv", header=TRUE) %>%
+canopy <- read.csv("C:/Users/User/Documents/Canopy_DOY.csv", header=TRUE) %>%
   mutate(Strata = 'Canopy',
          Site = gsub('C', '', Site)) %>%
   rename(DOY = DOY_canopy.greenup) 
 
 
 #Erythronium DOYs
-ery <- read.csv("C:/Users/User/Documents/erythronium/Extracted_DOYs_50/Ery_final_DOY_50.csv", header=TRUE) %>%
+ery <- read.csv("C:/Users/User/Documents/Erythronium_DOY.csv", header=TRUE) %>%
   mutate(Strata ='Understory',
          Site = gsub('G','',Site))
 
@@ -32,7 +32,7 @@ ery <- read.csv("C:/Users/User/Documents/erythronium/Extracted_DOYs_50/Ery_final
 
 #climate data
 #*****IMPORTANT: Run the climate_data code first to generate climate_new******
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 
 #Calculate T_spring and T_spatial
@@ -74,7 +74,7 @@ lmm.doy_LE_MAM_ery_df<-as.data.frame(summary(lmm.doy_LE_MAM_ery)$coef) %>%
 ###low elevation, MAMJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -114,7 +114,7 @@ lmm.doy_LE_MAMJ_df<-as.data.frame(summary(lmm.doy_LE_MAMJ)$coef) %>%
 ###low elevation, AM
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -154,7 +154,7 @@ lmm.doy_LE_AM_df<-as.data.frame(summary(lmm.doy_LE_AM)$coef) %>%
 ###low elevation, AMJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -194,7 +194,7 @@ lmm.doy_LE_AMJ_df<-as.data.frame(summary(lmm.doy_LE_AMJ)$coef) %>%
 ###low elevation, MJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -238,7 +238,7 @@ lmm_low.ele_ery <- rbind(lmm.doy_LE_MAM_df, lmm.doy_LE_MAMJ_df, lmm.doy_LE_AM_df
 ###mid elevation, MAM
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -277,7 +277,7 @@ lmm.doy_ME_MAM_ery_df<-as.data.frame(summary(lmm.doy_ME_MAM_ery)$coef) %>%
 ###mid elevation, MAMJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -316,7 +316,7 @@ lmm.doy_ME_MAMJ_df<-as.data.frame(summary(lmm.doy_ME_MAMJ)$coef) %>%
 ###mid elevation, AM
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -355,7 +355,7 @@ lmm.doy_ME_AM_df<-as.data.frame(summary(lmm.doy_ME_AM)$coef) %>%
 ###mid elevation, AMJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -395,7 +395,7 @@ lmm.doy_ME_AMJ_df<-as.data.frame(summary(lmm.doy_ME_AMJ)$coef) %>%
 ###mid elevation, MJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -440,7 +440,7 @@ lmm_mid.ele_ery <- rbind(lmm.doy_ME_MAM_df, lmm.doy_ME_MAMJ_df, lmm.doy_ME_AM_df
 ###high elevation, MAM
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -479,7 +479,7 @@ lmm.doy_HE_MAM_ery_df<-as.data.frame(summary(lmm.doy_HE_MAM_ery)$coef) %>%
 ###high elevation, MAMJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -519,7 +519,7 @@ lmm.doy_HE_MAMJ_df<-as.data.frame(summary(lmm.doy_HE_MAMJ)$coef) %>%
 ###high elevation, AM
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -559,7 +559,7 @@ lmm.doy_HE_AM_df<-as.data.frame(summary(lmm.doy_HE_AM)$coef) %>%
 ###high elevation, AMJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
@@ -599,7 +599,7 @@ lmm.doy_HE_AMJ_df<-as.data.frame(summary(lmm.doy_HE_AMJ)$coef) %>%
 ###high elevation, MJ
 
 #climate data
-climate_new <- read.csv("C:/Users/User/Documents/climatena/climate_new.csv", header=TRUE)
+climate_new <- read.csv("C:/Users/User/Documents/climate_new.csv", header=TRUE)
 
 #Calculate T_spring and T_spatial
 climate_new <- climate_new %>%
